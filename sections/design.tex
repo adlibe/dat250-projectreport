@@ -1,3 +1,5 @@
+\usepackage{float}
+
 \section{Design}
 \label{sec:design}
 
@@ -37,6 +39,7 @@ For the last use case, there is the functionality of logging into the created ac
 This section will describe the domain model.
 
 \subsection{Architecture}
+
 \subsubsection{Web UI / Elm}
 The web UI of the feed app is also the featured technology of this project. Therefore, it will be covered later on in a more in-depth look into the implementation and choice of the Elm programming language as our frontend framework for our web UI.
 
@@ -71,7 +74,7 @@ The non-relational database is the second part of the application’s analytics 
 
 When it comes to the choice of MongoDB as the database, it was not a straightforward choice. We also had a serious look at Apache Cassandra and even possibly using Redis as the non-relational database. Both of these offered perks that we could not get with MongoDB, such as Apache Cassandra offering really good scalability and working very well with big data. Redis on the other hand can be used as a very lightweight and high-speed database that stores data in memory and also has built-in pub/sub functionality (meaning it can be used as both a message broker AND non-relational database), which makes it very easy and beginner-friendly to implement. Even though these two alternatives provide some good perks of use, there are still good reasons to pick MongoDB over them, and also it provides sort of a middle ground between Cassandra and Redis. The reason we decided to go for MongoDB was that it works for everything we need, which is to view our analytics in a simple document-model. It gives us a simplicity and ease-of-use that Cassandra cannot deliver, and also it lets us view our analytics in a way that Redis cannot deliver as easily (for example the use of complex queries like “find()” from MongoDB is not provided in Redis).
 
-\begin{figure}[thb]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{figs/DAT250architecture.png}
 	\caption{The software architecture of the FeedApp.}
