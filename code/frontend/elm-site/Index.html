@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elm REST API Example</title>
+    <script src="elm/site/main.js"></script>
+</head>
+<body>
+    <h2>View & Vote on Polls</h2>
+    <div id="app"></div>
+    <script>
+
+        var app = Elm.Main.init({
+            node: document.getElementById('app')
+        });
+
+        function sendLocalSession(){
+            let s = localStorage.getItem("Session")
+
+            if (s != undefined){
+                app.ports.recciveSession.send(s)
+            }
+        }
+
+        if (app.ports?.requestSession?.subscribe){
+            app.ports.requestSession.subscribe(() => 
+                sendLocalSession()
+            )            
+        }
+
+        if (app.ports?.removeSession?.subscribe){
+            app.ports.removeSession.subscribe(() => 
+                localStorage.removeItem("Session")
+            )            
+        }
+
+        if (app.ports?.sendSession?.subscribe){
+            app.ports.sendSession.subscribe(reccivedStr =>
+                localStorage.setItem("Session", reccivedStr)
+            )
+        }
+                
+
+
+    </script>
+</body>
+</html>
