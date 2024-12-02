@@ -1,13 +1,84 @@
 \section{Prototype Implementation}
 \label{sec:implementation}
 
-This section should provide brief details of how the prototype has been implemented.
-You may want to use come code snippets here, but only focus on core features and aspects.
-You are not meant to copy/paste your whole application code into the report.
-Focus for instance how other developers may run your application and how they might develop it further...
+The FeedApp prototype was developed to demonstrate a functional implementation of a polling application with end-to-end integration across the front-end, back-end, and analytics components. The primary goal of the prototype was to validate the architectural decisions, assess the compatibility of the chosen technologies, and ensure that the application meets the outlined requirements.
 
+\subsection{Core Features}
+The prototype implements the following core functionalities:
+\subsubsection{User Authentication and Authorization}
+Users can register and log in to access features like creating polls and voting. Role-based authorization ensures that only registered users can perform specific actions, such as voting or creating polls, while unregistered users can view polls.
 
-The example below shows how you may include code. There are similar
-styles for many other langages - in case you do not use Java in your
-project. You can wrap the listing into a figure in case you need to
-refer to it. How to create a figure was shown in Section~\ref{sec:technology}.
+\subsubsection{Poll Creation}
+Registered users can create polls by providing a title, question, and multiple voting options. Each poll is assigned a unique identifier (\texttt{PollID}) for operations like retrieval and updates.
+
+\subsubsection{Voting}
+Users can cast votes on polls, with real-time updates reflected in the backend. To encourage transparency, the system optionally displays live vote counts for each option.
+
+\subsubsection{Poll Visibility}
+All users, regardless of authentication status, can view polls. This design choice promotes accessibility and user engagement with the application.
+
+\subsubsection{Analytics Generation}
+Every voting event triggers the creation of an aggregated summary of voting data. This summary is sent via RabbitMQ to the analytics component, where it is stored in MongoDB for further analysis.
+
+\subsection{Technology Stack}
+The prototype leverages a carefully selected technology stack to meet performance, scalability, and maintainability requirements:
+
+\subsubsection{Front-End}
+The web UI was implemented using the \textbf{Elm} programming language. Elm’s type safety and Model-View-Update (MVU) architecture provided a robust foundation for building the application. Despite its steep learning curve, Elm ensured a bug-free and maintainable codebase for the front-end.
+
+\subsubsection{Back-End}
+The back-end was built with \textbf{Java} and \textbf{SpringBoot}, providing RESTful APIs to handle user requests and interact with the database. Spring Security was used to implement authentication and authorization, offering both session-based and token-based mechanisms.
+
+\subsubsection{Relational Database}
+\textbf{H2} was chosen as the relational database for its simplicity and seamless integration with Spring Data JPA. It stores entities such as \texttt{User}, \texttt{Poll}, and \texttt{Vote}, enabling efficient CRUD operations.
+
+\subsubsection{Message Broker}
+\textbf{RabbitMQ} was utilized to implement asynchronous communication between the core application and the analytics component. It ensures reliable delivery of voting events and supports the publish/subscribe model.
+
+\subsubsection{NoSQL Database}
+\textbf{MongoDB} was selected for storing aggregated voting analytics. Its document-based model allowed for flexible storage and querying of unstructured data.
+
+\subsubsection{CI/CD Pipeline}
+\textbf{GitHub Actions} was used to automate testing and deployment processes. The pipeline ensured code quality through unit tests and built the application as Docker container images.
+
+\subsubsection{Containerization}
+\textbf{Docker} was used to containerize the application components. The containers were hosted in a public container registry, enabling easy deployment and scalability.
+
+\subsection{Implementation Details}
+\subsubsection{Authentication and Authorization}
+The authentication system uses \textbf{Spring Security} to manage user sessions and validate JWT tokens. Registered users are assigned roles to restrict access to sensitive operations. The integration of Spring Security with JPA allowed for seamless user management.
+
+\subsubsection{Data Persistence}
+The JPA entities \texttt{User}, \texttt{Poll}, \texttt{Vote}, and \texttt{VoteOption} were mapped to relational tables in H2. Relationships between entities, such as \texttt{Poll} having multiple \texttt{VoteOptions}, were implemented using annotations like \texttt{@OneToMany}.
+
+\subsubsection{Analytics Workflow}
+Each vote triggers a message to be sent to RabbitMQ, containing an aggregated summary of the poll's current state. The analytics component subscribes to these messages, processes them, and stores the results in MongoDB. Queries like \texttt{find()} in MongoDB allow retrieval of analytics data for visualization or reporting.
+
+\subsubsection{Web UI}
+The Elm-based front-end provides a responsive and user-friendly interface. Key components include:
+\begin{itemize}
+    \item \textbf{Poll Creation Form:} Allows users to create polls with a title, question, and options.
+    \item \textbf{Poll Listing:} Displays all polls, with voting functionality for authenticated users.
+    \item \textbf{Analytics Dashboard:} Shows aggregated voting data retrieved from MongoDB.
+\end{itemize}
+
+\subsubsection{CI/CD Pipeline}
+The GitHub Actions pipeline was configured to:
+\begin{itemize}
+    \item Run unit tests for all modules upon push or pull request.
+    \item Build Docker images for the application components.
+    \item Publish these images to DockerHub for public access.
+\end{itemize}
+
+\subsection{Challenges and Solutions}
+\subsubsection{Elm’s Steep Learning Curve}
+As a lesser-known framework, Elm required the team to dedicate significant time to learning its architecture and syntax. This challenge was mitigated by thorough documentation and online tutorials.
+
+\subsubsection{Messaging Reliability}
+RabbitMQ’s configuration initially posed difficulties in ensuring reliable message delivery. These were resolved by implementing message acknowledgment and retry mechanisms.
+
+\subsubsection{Integration Complexity}
+Coordinating the interactions between the front-end, back-end, and analytics components required careful planning. Regular testing and debugging sessions ensured smooth communication across all layers.
+
+\subsection{Prototype Validation}
+The prototype successfully demonstrated all core features and validated the feasibility of the chosen architecture. Key metrics such as response time, reliability of message delivery, and accuracy of analytics data met the project’s expectations. Although minor issues were encountered, they provided valuable learning experiences and insights into the strengths and limitations of the technologies used.

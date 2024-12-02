@@ -38,6 +38,63 @@ For the last use case, there is the functionality of logging into the created ac
 \subsection{Domain Model}
 This section will describe the domain model.
 
+\begin{figure}[thb]
+	\centering
+	\includegraphics[scale=0.5]{figs/domainmodel.png}
+	\caption{Domain model of the FeedApp.}
+	\label{fig:domainmodel}
+\end{figure}
+
+\subsection{Entities and Attributes}
+
+\subsubsection{Poll}
+A \textbf{Poll} represents the central object of the application, allowing users to create questions with a specified validity period. It contains the following attributes:
+\begin{itemize}
+    \item \textbf{id:} A unique identifier for the poll (Long).
+    \item \textbf{question:} The main question posed in the poll (String).
+    \item \textbf{publishedAt:} The timestamp when the poll was published (Instant).
+    \item \textbf{validUntil:} The expiration timestamp of the poll (Instant).
+\end{itemize}
+Each poll is associated with multiple \textbf{VoteOption} objects, which represent the possible answers users can vote on.
+
+\subsubsection{VoteOption}
+A \textbf{VoteOption} represents a single selectable option in a poll. It includes:
+\begin{itemize}
+    \item \textbf{id:} A unique identifier for the option (Long).
+    \item \textbf{text:} The text description of the voting option (String).
+    \item \textbf{votes:} The number of votes this option has received (int).
+\end{itemize}
+Each \textbf{VoteOption} belongs to a \textbf{Poll} and is updated as users cast their votes.
+
+\subsubsection{Vote}
+A \textbf{Vote} captures a user's action when selecting an option in a poll. It contains:
+\begin{itemize}
+    \item \textbf{createdAt:} The timestamp when the vote was cast (Instant).
+    \item \textbf{optionCaption:} A reference to the selected voting option's text (String).
+\end{itemize}
+The \textbf{Vote} is linked to a specific \textbf{User} and a specific \textbf{VoteOption} within a \textbf{Poll}.
+
+\subsubsection{User}
+The \textbf{User} entity represents individuals interacting with the application, whether to create polls, vote, or view analytics. Attributes include:
+\begin{itemize}
+    \item \textbf{id:} A unique identifier for the user (Long).
+    \item \textbf{username:} The display name of the user (String).
+    \item \textbf{email:} The user’s email address (String).
+\end{itemize}
+Additional attributes such as \textit{password} and \textit{token} were considered but remain undecided for inclusion due to potential security concerns and implementation details.
+
+\subsection{Relationships}
+\begin{itemize}
+    \item A \textbf{Poll} has multiple \textbf{VoteOptions}, forming a one-to-many relationship.
+    \item A \textbf{User} casts multiple \textbf{Votes}, establishing a one-to-many relationship.
+    \item Each \textbf{Vote} targets a single \textbf{VoteOption} within a specific \textbf{Poll}, creating a many-to-one relationship.
+\end{itemize}
+
+\subsection{Discussion}
+The current domain model supports the core functionalities of the application, including poll creation, voting, and analytics generation. The use of \texttt{Instant} for timestamps ensures precise time tracking, which is critical for enforcing poll validity and generating accurate analytics. The relationships between entities provide a scalable and flexible structure to accommodate additional features in the future.
+
+The model's simplicity ensures ease of implementation while maintaining the necessary complexity to meet the application requirements.
+
 \subsection{Architecture}
 
 \subsubsection{Web UI / Elm}
